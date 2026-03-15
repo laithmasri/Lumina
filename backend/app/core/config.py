@@ -1,7 +1,8 @@
 """This module defines the Settings class, which loads configuration values from environment variables."""
 
-from pydantic_settings import BaseSettings
 from typing import List
+
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -9,14 +10,17 @@ class Settings(BaseSettings):
 
     Attributes
     ----------
-    PROJECT_NAME : str
-        The name of the project.
     BACKEND_CORS_ORIGINS : List[str]
         The list of origins that are allowed to access the API.
+    DATABASE_URL : str
+        The URL of the database.
+    PROJECT_NAME : str
+        The name of the project.
     """
 
-    PROJECT_NAME: str = "Lumina API"
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    DATABASE_URL: str = "postgresql://user:password@localhost:5432/lumina"
+    PROJECT_NAME: str = "Lumina API"
 
     class Config:
         """Inner configuration for how environment variables are loaded.
