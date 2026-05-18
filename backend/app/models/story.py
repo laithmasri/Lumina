@@ -30,7 +30,7 @@ class Story(TimestampMixin, Base):
         autoincrement=True,
     )
     title: Mapped[str] = mapped_column(
-        String(length=225),
+        String(length=255),
         nullable=False,
     )
     body: Mapped[Optional[str]] = mapped_column(
