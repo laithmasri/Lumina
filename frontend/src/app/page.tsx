@@ -1,25 +1,12 @@
 import Image from "next/image";
 
+import StoryForm from "@/components/StoryForm";
+import { buildApiUrl, fetchStories } from "@/app/lib/api";
+
 type HealthResponse = {
   status: string;
   service: string;
 };
-
-
-/**
- * Build the absolute URL for a backend API endpoint.
- * 
- * This function reads the base URL from the NEXT_PUBLIC_API_URL environment 
- * variable and appends the provided path to it.
- * 
- * @param path - The path to the API endpoint.
- * @returns The full URL to the API endpoint.
- */
-function buildApiUrl(path: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-
-  return `${baseUrl}${path}`;
-}
 
 
 /**
@@ -59,6 +46,7 @@ async function fetchHealth(): Promise<HealthResponse | null> {
  */
 export default async function Home(): Promise<React.JSX.Element> {
   const health = await fetchHealth();
+  const stories = await fetchStories();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -83,6 +71,39 @@ export default async function Home(): Promise<React.JSX.Element> {
               {health ? `${health.status} (${health.service})` : "unreachable"}
             </span>
           </p>
+          <section className="w-full max-w-md">
+            <h2 className="mb-3 text-xl font-semibold text-black dark:text-zinc-50">
+              Create a story
+            </h2>
+            <StoryForm />
+          </section>
+
+          <section className="w-full max-w-md">
+            <h2 className="mb-3 text-xl font-semibold text-black dark:text-zinc-50">
+              Your stories
+            </h2>
+            {stories.length === 0 ? (
+              <p className="text-zinc-600 dark:text-zinc-400">No stories yet.</p>
+            ) : (
+              <ul className="flex flex-col gap-4">
+                {stories.map((story) => (
+                  <li
+                    key={story.id}
+                    className="rounded border border-zinc-200 p-4 dark:border-zinc-800"
+                  >
+                    <h3 className="font-semibold text-black dark:text-zinc-50">
+                      {story.title}
+                    </h3>
+                    {story.body && (
+                      <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+                        {story.body}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
       </main>
     </div>
