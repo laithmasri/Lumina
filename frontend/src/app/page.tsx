@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import StoryForm from "@/components/StoryForm";
 import { buildApiUrl, fetchStories } from "@/app/lib/api";
@@ -92,7 +93,12 @@ export default async function Home(): Promise<React.JSX.Element> {
                     className="rounded border border-zinc-200 p-4 dark:border-zinc-800"
                   >
                     <h3 className="font-semibold text-black dark:text-zinc-50">
-                      {story.title}
+                      <Link
+                        href={`/stories/${story.id}`}
+                        className="hover:underline"
+                      >
+                        {story.title}
+                      </Link>
                     </h3>
                     {story.body && (
                       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
