@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import StoryActions from "@/components/StoryActions";
 
+import { notFound } from "next/navigation";
 import { fetchStory } from "@/app/lib/api";
 
 type StoryPageProps = {
@@ -53,6 +54,7 @@ export default async function StoryPage({
         ) : (
           <p className="mt-8 italic text-zinc-500">No body text.</p>
         )}
+        <StoryActions story={story} />
       </article>
     </div>
   );
