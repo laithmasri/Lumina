@@ -62,3 +62,22 @@ class StoryRead(StoryBase):
     model_config = {
         "from_attributes": True,
     }
+
+
+class StoryUpdate(BaseModel):
+    """Payload schema for partially updating a story.
+    
+    All fields are optional. Only fields included in the request body
+    are updated, omotted fields are left unchanged.
+    """
+
+    title: Optional[str] = Field(
+        default=None,
+        description="Updated story title.",
+        max_length=255,
+    )
+
+    body: Optional[str] = Field(
+        default=None,
+        description="Updated story body text.",
+    )
