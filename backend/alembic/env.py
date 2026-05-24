@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app.core.config import settings
 from app.db.base import Base
 from app.models import story as story_model  # noqa: F401 — register models
+from app.models import user as user_model  # noqa: F401
 
 config = context.config
 

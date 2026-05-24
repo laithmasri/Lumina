@@ -10,17 +10,23 @@ class Settings(BaseSettings):
 
     Attributes
     ----------
-    BACKEND_CORS_ORIGINS : List[str]
+    BACKEND_CORS_ORIGINS: List[str]
         The list of origins that are allowed to access the API.
-    DATABASE_URL : str
+    DATABASE_URL: str
         The URL of the database.
-    PROJECT_NAME : str
+    PROJECT_NAME: str
         The name of the project.
+    SUPABASE_URL: str
+        Identifies the Supabase project.
+    SUPABASE_JWT_SECRET: str
+        Verifies that JWTs were issued by the project. 
     """
 
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
     DATABASE_URL: str = "postgresql://user:password@localhost:5432/lumina"
     PROJECT_NAME: str = "Lumina API"
+    SUPABASE_URL: str = ""
+    SUPABASE_JWT_SECRET: str = ""
 
     class Config:
         """Inner configuration for how environment variables are loaded.

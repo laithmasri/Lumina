@@ -11,7 +11,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from app.models.story import Story
+from app.models import Story
 
 from app.schemas.story import StoryUpdate
 

@@ -1,24 +1,31 @@
 """SQLAlchemy ORM model for stories."""
 
-from typing import Optional
+from __future__ import annotations
 
-from sqlalchemy import Integer, String, Text 
-from sqlalchemy.orm import Mapped, mapped_column
+from typing import TYPE_CHECKING, Optional
+
+from sqlalchemy import ForeignKey, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class Story(TimestampMixin, Base):
     """Database model representing a story.
-    
+
     Attributes
     ----------
-    id: Integer
-        Represents the primary key for the story.
-    title: String
-        A short, human-readable title for the story.
-    body:
-        The main text content of the story.
+    id : int
+        Primary key for the story.
+    title : str
+        Short, human-readable title for the story.
+    body : Optional[str]
+        Main text content of the story.
+    user_id : Optional[int]
+        Foreign key to the owning user, if assigned.
     """
 
     __tablename__ = "stories"
@@ -36,4 +43,13 @@ class Story(TimestampMixin, Base):
     body: Mapped[Optional[str]] = mapped_column(
         Text,
         nullable=True,
+    )
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        index=True,
+        nullable=True,
+    )
+    author: Mapped[User | None] = relationship(
+        "User",
+        back_populates="stories",
     )
