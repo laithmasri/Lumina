@@ -12,8 +12,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models.story import Story
 from app.schemas.story import StoryCreate, StoryRead
+from app.services import story_service
 
 router = APIRouter()
 
@@ -41,15 +41,11 @@ def create_story(
     StoryRead
         The created story including id and timestamps.
     """
-    story = Story(
+    story = story_service.create_story(
+        db,
         title=story_in.title,
         body=story_in.body,
     )
-
-    db.add(story)
-    db.commit()
-    db.refresh(story)
-
     return StoryRead.model_validate(story)
 
 
@@ -72,12 +68,7 @@ def list_stories(
     List[StoryRead]
         A list of StoryRead objects.
     """
-    stories = (
-        db.query(Story)
-        .order_by(Story.created_at.desc())
-        .all()
-    )
-
+    stories = story_service.list_stories(db)
     return [StoryRead.model_validate(story) for story in stories]
 
 
@@ -89,7 +80,7 @@ def get_story(
     story_id: int,
     db: Session = Depends(get_db),
 ) -> StoryRead:
-    f"""Get one story by id.
+    """Get one story by id.
     
     Parameters
     ----------
@@ -108,7 +99,7 @@ def get_story(
     HTTPException
         404 if the story does not exist.
     """
-    story = db.get(Story, story_id)
+    story = story_service.get_story_by_id(db, story_id)
 
     if story is None:
         raise HTTPException(
