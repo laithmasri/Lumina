@@ -1,8 +1,12 @@
 """This module defines the Settings class, which loads configuration values from environment variables."""
 
+from pathlib import Path
 from typing import List
 
 from pydantic_settings import BaseSettings
+
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+_ENV_FILE = _BACKEND_DIR / ".env"
 
 
 class Settings(BaseSettings):
@@ -37,7 +41,7 @@ class Settings(BaseSettings):
             The path to the environment file.
         """
 
-        env_file: str = ".env"
+        env_file: str = str(_ENV_FILE)
 
 
 settings = Settings()
