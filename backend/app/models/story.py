@@ -18,14 +18,14 @@ class Story(TimestampMixin, Base):
 
     Attributes
     ----------
-    id : int
+    id: int
         Primary key for the story.
-    title : str
+    title: str
         Short, human-readable title for the story.
-    body : Optional[str]
+    body: Optional[str]
         Main text content of the story.
-    user_id : Optional[int]
-        Foreign key to the owning user, if assigned.
+    user_id: int
+        Foreign key to the owning user.
     """
 
     __tablename__ = "stories"
@@ -44,12 +44,12 @@ class Story(TimestampMixin, Base):
         Text,
         nullable=True,
     )
-    user_id: Mapped[int | None] = mapped_column(
+    user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         index=True,
-        nullable=True,
+        nullable=False,
     )
-    author: Mapped[User | None] = relationship(
+    author: Mapped["User"] = relationship(
         "User",
         back_populates="stories",
     )
