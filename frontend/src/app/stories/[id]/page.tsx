@@ -1,32 +1,79 @@
+"use client";
+
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import StoryActions from "@/components/StoryActions";
-
-import { notFound } from "next/navigation";
-import { fetchStory } from "@/app/lib/api";
-
-type StoryPageProps = {
-  params: Promise<{ id: string }>;
-};
+import { fetchStory, type Story } from "@/app/lib/api";
+import { supabase } from "@/lib/supabase/client";
 
 /**
  * Story detail page — shows one story at /stories/[id].
- *
- * Server component: fetches the story on the server before sending HTML.
  */
-export default async function StoryPage({
-  params,
-}: StoryPageProps): Promise<React.JSX.Element> {
-  const { id } = await params;
-  const storyId = Number(id);
+export default function StoryPage(): React.JSX.Element {
+  const params = useParams<{ id: string }>();
+  const [story, setStory] = useState<Story | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (Number.isNaN(storyId)) {
-    notFound();
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadStory() {
+      const storyId = Number(params.id);
+      if (Number.isNaN(storyId)) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token ?? null;
+      if (!accessToken) {
+        if (!cancelled) {
+          setStory(null);
+          setLoading(false);
+        }
+        return;
+      }
+
+      const result = await fetchStory(storyId, accessToken);
+      if (!cancelled) {
+        setStory(result);
+        setLoading(false);
+      }
+    }
+
+    loadStory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen justify-center bg-zinc-50 px-6 py-16 font-sans dark:bg-black">
+        <p className="text-zinc-600 dark:text-zinc-400">Loading story...</p>
+      </div>
+    );
   }
 
-  const story = await fetchStory(storyId);
-
   if (!story) {
-    notFound();
+    return (
+      <div className="flex min-h-screen justify-center bg-zinc-50 px-6 py-16 font-sans dark:bg-black">
+        <article className="w-full max-w-2xl">
+          <Link
+            href="/"
+            className="text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
+          >
+            ← Back to all stories
+          </Link>
+          <p className="mt-6 text-zinc-600 dark:text-zinc-400">
+            Story not found, or you are not signed in.
+          </p>
+        </article>
+      </div>
+    );
   }
 
   return (

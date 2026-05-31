@@ -8,7 +8,11 @@ import { createStory } from "@/app/lib/api";
 /**
  * Form for creating a new story. Runs in the browser (client component).
  */
-export default function StoryForm() {
+type StoryFormProps = {
+  onStoryCreated?: () => void;
+};
+
+export default function StoryForm({ onStoryCreated }: StoryFormProps) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -28,12 +32,15 @@ export default function StoryForm() {
     setSubmitting(false);
 
     if (!story) {
-      setError("Failed to create story. Is the backend running?");
+      setError(
+        "Failed to create story. Sign in first, or check that the backend is running.",
+      );
       return;
     }
 
     setTitle("");
     setBody("");
+    onStoryCreated?.();
     router.refresh();
   }
 
